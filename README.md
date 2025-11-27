@@ -135,8 +135,6 @@ This UI is also a simple endpoint tester useful during development.
 
 # 🧩 Next Steps
 
-After setup, teams will typically:
-
 * Fill in backend classes (models, repositories, services)
 * Replace placeholder JSON in controllers
 * Build out frontend pages based on the API
