@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gomibo Hackathon – React Debug UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<div id="root"></div>
+
+<!-- React CDN -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+
+const API_BASE = '';
+
+async function apiGet(path) {
+  const res = await fetch(API_BASE + path);
+  if (!res.ok) throw new Error('GET ' + path + ' failed: ' + res.status);
+  return res.json();
+}
+
+async function apiPost(path, body) {
+  const res = await fetch(API_BASE + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error('POST ' + path + ' failed: ' + res.status + ' ' + text);
+  }
+  return res.json();
+}
+
+function App() {
+  const [lastResponse, setLastResponse] = React.useState('{}');
+  const [error, setError] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  async function safeCall(fn) {
+    setError('');
+    setLoading(true);
+    try {
+      const data = await fn();
+      setLastResponse(JSON.stringify(data, null, 2));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function loadProducts() {
+    safeCall(() => apiGet('/products'));
+  }
+
+  function addToCart() {
+    const payload = { product_id: 1, quantity: 1 };
+    safeCall(() => apiPost('/cart/add', payload));
+  }
+
+  function loadCart() {
+    safeCall(() => apiGet('/cart'));
+  }
+
+  return (
+    <div>
+      <h1>Gomibo Hackathon – Backend Tester (React)</h1>
+      <p>This page calls your backend API and shows the JSON response.</p>
+
+      <div>
+        <button onClick={loadProducts} disabled={loading}>Load products (GET /products)</button>
+        <button onClick={addToCart} disabled={loading}>Add product #1 to cart (POST /cart/add)</button>
+        <button onClick={loadCart} disabled={loading}>View cart (GET /cart)</button>
+      </div>
+
+      {error && (
+        <div>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      <h2>Last response:</h2>
+      <pre>{lastResponse}</pre>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
+</script>
+</body>
+</html>
