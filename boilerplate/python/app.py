@@ -15,7 +15,8 @@ def cart():
 
 @app.post("/cart/add")
 def cart_add():
-    return add_to_cart()
+    # TODO: Fix parameters
+    return add_to_cart(0)
 
 @app.post("/checkout")
 def checkout():
