@@ -1,15 +1,43 @@
 from fastapi import FastAPI
+from models.product import Product
 from controllers.product_controller import ProductController
 from controllers.cart_controller import CartController
 from controllers.checkout_controller import CheckoutController
 
 app = FastAPI()
 cart_controller = CartController()
+product_controller = ProductController()
 
+
+# region Product Endpoints
 @app.get("/products/id/{product_id}")
 def products():
-    return ProductController().get_all_products()
+    return product_controller.get_all_products()
 
+
+@app.post("/products/", response_model=dict)
+def add_product(product: Product):
+    """Add a new product"""
+    return product_controller.add_product(product)
+
+
+@app.get("/products/{product_id}", response_model=Product)
+def get_product(product_id: int):
+    """Retrieve a product by ID"""
+    return product_controller.get_product(product_id)
+
+
+@app.get("/products/", response_model=List[Product])
+def get_all_products():
+    """Return all products"""
+    return product_controller.get_all_products()
+
+
+@app.delete("/products/{product_id}", response_model=dict)
+def delete_product(product_id: int):
+    """Delete a product by ID"""
+    return product_controller.delete_product(product_id)
+# endregion
 
 # region Cart Endpoints
 @app.get("/cart/{customer_id}")
