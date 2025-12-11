@@ -1,19 +1,16 @@
-from typing import Dict, Optional
-from models.product import Product
+from typing import Dict, Any, Optional, List
 
-
-# TODO: Replace with DB.
 class ProductRepository:
     def __init__(self):
-        self._products: Dict[int, Product] = {}
+        self._products: Dict[int, Dict[str, Any]] = {}
 
-    def get_product(self, product_id: int) -> Optional[Product]:
+    def get_product(self, product_id: int) -> Optional[Dict[str, Any]]:
         """Retrieve a product by ID."""
         return self._products.get(product_id)
 
-    def save_product(self, product: Product) -> None:
+    def save_product(self, product: Dict[str, Any]) -> None:
         """Save or update a product."""
-        self._products[product.product_id] = product
+        self._products[product["product_id"]] = product
 
     def delete_product(self, product_id: int) -> None:
         """Delete a product by ID."""
@@ -24,6 +21,6 @@ class ProductRepository:
         """Check if a product exists."""
         return product_id in self._products
 
-    def get_all_products(self):
+    def get_all_products(self) -> List[Dict[str, Any]]:
         """Return all stored products."""
         return list(self._products.values())

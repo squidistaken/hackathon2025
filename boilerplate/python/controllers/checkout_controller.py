@@ -1,12 +1,18 @@
-from models.cart import Cart
-from fastapi import HTTPException
-from models.customer import Customer
-from models.shipping_option import ShippingOption
+# controllers/checkout_controller.py
+from fastapi import HTTPException, Depends
 from typing import Optional
+from models.shipping_option import ShippingOption
+from repositories.cart_repository import CartRepository
+from repositories.product_repository import ProductRepository
+from services.checkout_service import CheckoutService
 
 
 class CheckoutController:
-    def __init__(self):
+    def __init__(
+        self,
+        cart_repo: CartRepository = Depends(CartRepository),
+        product_repo: ProductRepository = Depends(ProductRepository)
+    ):
         self.shipping_options = [
             ShippingOption(
                 name="Standard",
@@ -27,14 +33,14 @@ class CheckoutController:
                 description="Overnight delivery"
             )
         ]
+        self.checkout_service = CheckoutService(cart_repo, product_repo)
 
-    def process_checkout(self, customer_id: int, cart: Cart, shipping_option_name: Optional[str] = None):
-        if not cart or not cart.items:
-            raise HTTPException(status_code=400, detail="Cart is empty or invalid.")
+    def get_shipping_options(self):
+        """Get available shipping options"""
+        return self.shipping_options
 
-        # TODO: Fix.
-        customer = Customer(customer_id=customer_id, name="John Doe", email="john.doe@example.com")
-
+    def process_checkout(self, customer_id: int, shipping_option_name: Optional[str] = None):
+        """Process checkout for a customer"""
         # Find selected shipping option
         shipping_option = None
         if shipping_option_name:
@@ -45,41 +51,46 @@ class CheckoutController:
             if not shipping_option:
                 raise HTTPException(status_code=400, detail="Invalid shipping option")
 
-        # Create order with shipping option
-        order = cart.to_order(customer=customer, shipping_option=shipping_option)
+        try:
+            # Use the service to perform checkout
+            order = self.checkout_service.checkout(customer_id, shipping_option)
 
-        # Clear the cart after checkout
-        cart.clear()
-
-        # Prepare response
-        response = {
-            "message": "Checkout successful.",
-            "order": {
-                "order_id": hash(f"{customer_id}{len(order.items)}{shipping_option_name or 'none'}"),
-                "customer": customer_id,
-                "items": [
-                    {
-                        "product_id": item.product.product_id,
-                        "product_name": item.product.name,
-                        "quantity": item.quantity,
-                        "subtotal": item.calculate_subtotal()
-                    } for item in order.items
-                ],
-                "subtotal": sum(item.calculate_subtotal() for item in order.items),
-                "status": order.status
+            # Prepare response
+            response = {
+                "message": "Checkout successful.",
+                "order": {
+                    "order_id": hash(f"{customer_id}{len(order.items)}{shipping_option_name or 'none'}"),
+                    "customer": {
+                        "id": customer.customer_id,
+                        "name": customer.name,
+                        "email": customer.email
+                    },
+                    "items": [
+                        {
+                            "product_id": item.product.product_id,
+                            "product_name": item.product.name,
+                            "quantity": item.quantity,
+                            "subtotal": item.calculate_subtotal()
+                        } for item in order.items
+                    ],
+                    "subtotal": sum(item.calculate_subtotal() for item in order.items),
+                    "status": order.status
+                }
             }
-        }
 
-        # Add shipping information if a shipping option was selected
-        if shipping_option:
-            response["order"]["shipping"] = {
-                "option": shipping_option.name,
-                "cost": shipping_option.cost,
-                "estimated_delivery_days": shipping_option.estimated_delivery_days,
-                "description": shipping_option.description
-            }
-            response["order"]["total"] = order.calculate_total()
-        else:
-            response["order"]["total"] = response["order"]["subtotal"]
+            # Add shipping information if a shipping option was selected
+            if shipping_option:
+                response["order"]["shipping"] = {
+                    "option": shipping_option.name,
+                    "cost": shipping_option.cost,
+                    "estimated_delivery_days": shipping_option.estimated_delivery_days,
+                    "description": shipping_option.description
+                }
+                response["order"]["total"] = order.calculate_total()
+            else:
+                response["order"]["total"] = response["order"]["subtotal"]
 
-        return response
+            return response
+
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))

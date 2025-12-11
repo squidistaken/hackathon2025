@@ -1,5 +1,4 @@
 from .cart_item import CartItem
-from .customer import Customer
 from typing import List, Optional
 from .order import Order
 from .shipping_option import ShippingOption
@@ -34,9 +33,6 @@ class Cart:
 
     def calculate_total(self) -> float:
         return sum(item.calculate_subtotal() for item in self.items)
-
-    def to_order(self, customer: Customer, shipping_option: Optional[ShippingOption] = None) -> Order:
-        return Order(customer=customer, items=self.items.copy(), shipping_option=shipping_option)
 
     def __repr__(self) -> str:
         return f"<Cart with {len(self.items)} items>"

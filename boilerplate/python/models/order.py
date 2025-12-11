@@ -1,13 +1,11 @@
 from typing import List, Optional
 from datetime import datetime
 from .cart_item import CartItem
-from .customer import Customer
 from .shipping_option import ShippingOption
 
 
 class Order:
     def __init__(self,
-                 customer: 'Customer',
                  items: list['CartItem'],
                  shipping_option: Optional['ShippingOption'] = None,
                  order_date: Optional[datetime] = None,
