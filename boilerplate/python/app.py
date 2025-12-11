@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from typing import Optional
-from models.product import Product
 from controllers.product_controller import ProductController
 from controllers.cart_controller import CartController
 from controllers.checkout_controller import CheckoutController
+from typing import Dict, Any
+from fastapi import Body
 
 app = FastAPI()
 
@@ -14,28 +15,20 @@ checkout_controller = CheckoutController()
 
 
 # region Product Endpoints
-@app.get("/products/id/{product_id}")
-def products():
-    return product_controller.get_all_products()
-
-
 @app.post("/products/")
-def add_product(product: Product):
+def add_product(product: Dict[str, Any] = Body(...)):
     """Add a new product"""
     return product_controller.add_product(product)
-
 
 @app.get("/products/{product_id}")
 def get_product(product_id: int):
     """Retrieve a product by ID"""
     return product_controller.get_product(product_id)
 
-
 @app.get("/products/")
 def get_all_products():
     """Return all products"""
     return product_controller.get_all_products()
-
 
 @app.delete("/products/{product_id}")
 def delete_product(product_id: int):
