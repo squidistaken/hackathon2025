@@ -12,6 +12,7 @@ interface CartSidebarProps {
   onClose: () => void;
   onAddToCart: (product: Product) => void;
   onRemoveFromCart: (productId: number) => void;
+  onProceedToCheckout: () => void;
 }
 
 export function CartSidebar({
@@ -22,6 +23,7 @@ export function CartSidebar({
   onClose,
   onAddToCart,
   onRemoveFromCart,
+  onProceedToCheckout,
 }: CartSidebarProps) {
   return (
     <>
@@ -98,7 +100,9 @@ export function CartSidebar({
                         variant="ghost"
                         className="h-7 w-7"
                         onClick={() => {
-                          const product = products.find((p) => p.id === item.id);
+                          const product = products.find(
+                            (p) => p.id === item.id
+                          );
                           if (product) onAddToCart(product);
                         }}
                       >
@@ -147,7 +151,11 @@ export function CartSidebar({
             </div>
 
             {/* Checkout Button */}
-            <Button className="w-full h-12 text-base" size="lg">
+            <Button
+              className="w-full h-12 text-base"
+              size="lg"
+              onClick={onProceedToCheckout}
+            >
               Proceed to Checkout
             </Button>
           </div>

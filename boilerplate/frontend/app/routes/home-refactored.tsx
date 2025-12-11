@@ -1,4 +1,4 @@
-import type { Route } from "./+types/home";
+/* removed missing type import: Route definitions not available in this build */
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
@@ -10,13 +10,12 @@ import { FlashSaleBanner } from "../components/FlashSaleBanner";
 import { ProductGrid } from "../components/ProductGrid";
 import { ToastNotification } from "../components/ToastNotification";
 import { CartSidebar } from "../components/CartSidebar";
-// import { CheckoutModal } from "../components/CheckoutModal";
 import { SearchOverlay } from "../components/SearchOverlay";
 import { useCart } from "../hooks/useCart";
 import { products, categories, popularSearches } from "../data/products";
 import { createProductSlug, filterProducts } from "../utils/productUtils";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Godimo - Buy Latest Smartphones" },
     {
@@ -41,8 +40,6 @@ export default function Home() {
   } = useCart();
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  // const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  // const [checkoutDone, setCheckoutDone] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -122,8 +119,6 @@ export default function Home() {
           }}
         />
       )}
-
-      {/* Checkout Modal and confirmation removed, now handled in /checkout route */}
 
       {/* Search Overlay */}
       {isSearchOpen && (
