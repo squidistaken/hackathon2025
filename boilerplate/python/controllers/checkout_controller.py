@@ -1,2 +1,85 @@
-def process_checkout():
-    return {"message": "Checkout endpoint (not implemented)"} 
+from models.cart import Cart
+from fastapi import HTTPException
+from models.customer import Customer
+from models.shipping_option import ShippingOption
+from typing import Optional
+
+
+class CheckoutController:
+    def __init__(self):
+        self.shipping_options = [
+            ShippingOption(
+                name="Standard",
+                cost=5.99,
+                estimated_delivery_days=5,
+                description="Standard delivery within 5 business days"
+            ),
+            ShippingOption(
+                name="Express",
+                cost=12.99,
+                estimated_delivery_days=2,
+                description="Express delivery within 2 business days"
+            ),
+            ShippingOption(
+                name="Overnight",
+                cost=24.99,
+                estimated_delivery_days=1,
+                description="Overnight delivery"
+            )
+        ]
+
+    def process_checkout(self, customer_id: int, cart: Cart, shipping_option_name: Optional[str] = None):
+        if not cart or not cart.items:
+            raise HTTPException(status_code=400, detail="Cart is empty or invalid.")
+
+        # TODO: Fix.
+        customer = Customer(customer_id=customer_id, name="John Doe", email="john.doe@example.com")
+
+        # Find selected shipping option
+        shipping_option = None
+        if shipping_option_name:
+            shipping_option = next(
+                (opt for opt in self.shipping_options if opt.name.lower() == shipping_option_name.lower()),
+                None
+            )
+            if not shipping_option:
+                raise HTTPException(status_code=400, detail="Invalid shipping option")
+
+        # Create order with shipping option
+        order = cart.to_order(customer=customer, shipping_option=shipping_option)
+
+        # Clear the cart after checkout
+        cart.clear()
+
+        # Prepare response
+        response = {
+            "message": "Checkout successful.",
+            "order": {
+                "order_id": hash(f"{customer_id}{len(order.items)}{shipping_option_name or 'none'}"),
+                "customer": customer_id,
+                "items": [
+                    {
+                        "product_id": item.product.product_id,
+                        "product_name": item.product.name,
+                        "quantity": item.quantity,
+                        "subtotal": item.calculate_subtotal()
+                    } for item in order.items
+                ],
+                "subtotal": sum(item.calculate_subtotal() for item in order.items),
+                "status": order.status
+            }
+        }
+
+        # Add shipping information if a shipping option was selected
+        if shipping_option:
+            response["order"]["shipping"] = {
+                "option": shipping_option.name,
+                "cost": shipping_option.cost,
+                "estimated_delivery_days": shipping_option.estimated_delivery_days,
+                "description": shipping_option.description
+            }
+            response["order"]["total"] = order.calculate_total()
+        else:
+            response["order"]["total"] = response["order"]["subtotal"]
+
+        return response
