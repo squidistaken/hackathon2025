@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from controllers.product_controller import ProductController
-from controllers.cart_controller import view_cart, add_to_cart
+from controllers.cart_controller import CartController
 from controllers.checkout_controller import process_checkout
 
 app = FastAPI()
@@ -9,14 +9,14 @@ app = FastAPI()
 def products():
     return ProductController().get_all_products()
 
+# TODO: Fix parameters
 @app.get("/cart")
 def cart():
-    return view_cart()
+    return CartController().view_cart(0)
 
 @app.post("/cart/add")
 def cart_add():
-    # TODO: Fix parameters
-    return add_to_cart(0)
+    return CartController().add_to_cart(0, 0)
 
 @app.post("/checkout")
 def checkout():

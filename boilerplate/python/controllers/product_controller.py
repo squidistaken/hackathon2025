@@ -1,26 +1,32 @@
-from typing import Dict, Optional, List
-from hackathlon.hackathon2025.boilerplate.python.models.product import Product 
+from typing import Optional, List
+from models.product import Product
+from repositories.product_repository import ProductRepository
+from fastapi import HTTPException
 
 
 class ProductController:
     def __init__(self):
-        self.products: Dict[int, Product] = {}
+        self.product_repo = ProductRepository()
 
-    def add_product(self, product: Product) -> None:
+    def add_product(self, product: Product):
         """Add a new product."""
-        self.products[product.product_id] = product
+        self.product_repo.save_product(product)
+        return {"message": "Product added successfully."}
 
-    def get_product(self, product_id: int) -> Optional[Product]:
+    def get_product(self, product_id: int):
         """Retrieve a product by ID."""
-        return self.products.get(product_id)
+        product = self.product_repo.get_product(product_id)
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        return product
 
     def get_all_products(self) -> List[Product]:
         """Return all products."""
-        return list(self.products.values())
+        return self.product_repo.get_all_products()
 
-    def delete_product(self, product_id: int) -> bool:
+    def delete_product(self, product_id: int):
         """Delete a product by ID. Returns True if successful."""
-        if product_id in self.products:
-            del self.products[product_id]
-            return True
-        return False
+        if not self.product_repo.product_exists(product_id):
+            raise HTTPException(status_code=404, detail="Product not found")
+        self.product_repo.delete_product(product_id)
+        return {"message": "Product deleted successfully."}
