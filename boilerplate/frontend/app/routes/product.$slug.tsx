@@ -1,10 +1,7 @@
 import type { Route } from "./+types/product.$slug";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  Card,
-  CardContent,
-} from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import {
@@ -589,11 +586,7 @@ export default function ProductDetail({ params }: Route.ComponentProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="px-4 py-3">
           <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => navigate("/")}
-            >
+            <Button size="icon" variant="ghost" onClick={() => navigate("/")}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 truncate">
@@ -663,11 +656,17 @@ export default function ProductDetail({ params }: Route.ComponentProps) {
                     Availability
                   </span>
                   {product.stock > 20 ? (
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400"
+                    >
                       In Stock ({product.stock} available)
                     </Badge>
                   ) : product.stock > 0 ? (
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400">
+                    <Badge
+                      variant="secondary"
+                      className="bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400"
+                    >
                       Only {product.stock} left!
                     </Badge>
                   ) : (

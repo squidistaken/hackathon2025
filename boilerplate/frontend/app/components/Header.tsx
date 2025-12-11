@@ -7,7 +7,11 @@ interface HeaderProps {
   onCartClick: () => void;
 }
 
-export function Header({ totalItems, onSearchClick, onCartClick }: HeaderProps) {
+export function Header({
+  totalItems,
+  onSearchClick,
+  onCartClick,
+}: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
       <div className="px-4 py-3">
