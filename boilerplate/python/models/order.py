@@ -34,5 +34,26 @@ class Order:
     def remove_item(self, item: 'CartItem') -> None:
         self.items.remove(item)
 
+    def to_dict(self) -> dict:
+        """Convert Order object to dictionary for serialization."""
+        return {
+            "customer_id": self.customer.customer_id,
+            "customer_name": self.customer.name,
+            "items": [
+                {
+                    "product_id": item.product.product_id,
+                    "product_name": item.product.name,
+                    "quantity": item.quantity,
+                    "subtotal": item.calculate_subtotal(),
+                }
+                for item in self.items
+            ],
+            "subtotal": sum(item.calculate_subtotal() for item in self.items),
+            "shipping": self.shipping_option.to_dict() if self.shipping_option else None,
+            "total": self.calculate_total(),
+            "order_date": self.order_date.isoformat(),
+            "status": self.status,
+        }
+
     def __repr__(self) -> str:
         return f"<Order {self.order_date} - {self.status}>"
