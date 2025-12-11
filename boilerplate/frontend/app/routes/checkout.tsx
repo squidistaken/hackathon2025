@@ -21,7 +21,8 @@ export default function Checkout() {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height / 2 + window.scrollY) / window.innerHeight;
+      const y =
+        (rect.top + rect.height / 2 + window.scrollY) / window.innerHeight;
       setConfettiXY({ x, y });
     } else {
       setConfettiXY({ x: 0.5, y: 0.5 });
@@ -35,7 +36,14 @@ export default function Checkout() {
     <div className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col items-center justify-center relative overflow-hidden px-2 py-4 sm:px-0">
       {/* Confetti Animation (react-confetti-boom) */}
       {showConfetti && (
-        <div style={{position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none'}}>
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            pointerEvents: "none",
+          }}
+        >
           <ConfettiBoom
             key={confettiKey}
             mode="boom"

@@ -32,7 +32,7 @@ export function ProductCard({
           src={product.image}
           alt={product.name}
           className="max-h-[140px] w-auto object-contain p-4 mx-auto"
-          style={{ maxWidth: '100%' }}
+          style={{ maxWidth: "100%" }}
         />
         {product.stock && product.stock < 20 && (
           <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-md shadow-sm">
