@@ -15,7 +15,8 @@ You have **3.5 hours** to build a working demo that demonstrates the shopping ca
 ### 1. Browse products
 - Phones  
 - Accessories  
-- Subscriptions  
+- Subscriptions
+- **Note**: You can use the `example_products.json` file here.  
 
 ### 2. Add items to a cart
 - Phone only  
