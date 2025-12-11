@@ -9,6 +9,8 @@ interface ProductCardProps {
   onProductClick: () => void;
   onAddToCart: () => void;
   onRemoveFromCart: () => void;
+  onCompareClick?: () => void;
+  isCompared?: boolean;
 }
 
 export function ProductCard({
@@ -17,6 +19,8 @@ export function ProductCard({
   onProductClick,
   onAddToCart,
   onRemoveFromCart,
+  onCompareClick,
+  isCompared,
 }: ProductCardProps) {
   return (
     <Card
@@ -35,7 +39,7 @@ export function ProductCard({
           </div>
         )}
       </div>
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-4 space-y-3 relative">
         <div className="space-y-1">
           <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-50 line-clamp-2 leading-tight min-h-10">
             {product.name}
@@ -95,6 +99,20 @@ export function ProductCard({
             </Button>
           )}
         </div>
+        {/* Compare Button */}
+        {onCompareClick && (
+          <Button
+            size="sm"
+            variant={isCompared ? "default" : "outline"}
+            className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full ${isCompared ? "bg-blue-600 text-white" : "bg-white text-blue-600 border-blue-600"}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCompareClick();
+            }}
+          >
+            {isCompared ? "Selected" : "Compare"}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
