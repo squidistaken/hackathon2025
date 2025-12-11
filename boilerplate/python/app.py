@@ -5,7 +5,7 @@ from controllers.checkout_controller import CheckoutController
 
 app = FastAPI()
 
-@app.get("/products")
+@app.get("/products/id/{product_id}")
 def products():
     return ProductController().get_all_products()
 
