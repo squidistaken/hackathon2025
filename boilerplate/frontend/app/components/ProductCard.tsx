@@ -24,14 +24,15 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <Card
-      className="overflow-hidden active:scale-[0.98] transition-all duration-200 hover:shadow-md cursor-pointer border-zinc-200 dark:border-zinc-800"
+      className="overflow-hidden active:scale-[0.98] transition-all duration-200 hover:shadow-md cursor-pointer border-zinc-200 dark:border-zinc-800 flex flex-col h-full min-h-[370px]"
       onClick={onProductClick}
     >
-      <div className="relative bg-linear-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-900">
+      <div className="relative bg-linear-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center min-h-[180px] h-[180px]">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-44 object-contain p-4"
+          className="max-h-[140px] w-auto object-contain p-4 mx-auto"
+          style={{ maxWidth: '100%' }}
         />
         {product.stock && product.stock < 20 && (
           <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-md shadow-sm">
@@ -39,8 +40,8 @@ export function ProductCard({
           </div>
         )}
       </div>
-      <CardContent className="p-4 space-y-3 relative">
-        <div className="space-y-1">
+      <CardContent className="flex flex-col flex-1 p-4 space-y-3 relative">
+        <div className="space-y-1 min-h-[48px]">
           <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-50 line-clamp-2 leading-tight min-h-10">
             {product.name}
           </h3>
@@ -48,7 +49,7 @@ export function ProductCard({
             {product.description}
           </p>
         </div>
-
+        <div className="flex-1" />
         <div className="flex items-end justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
           <div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-0.5">

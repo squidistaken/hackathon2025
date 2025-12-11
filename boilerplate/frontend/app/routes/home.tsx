@@ -1,5 +1,5 @@
 import type { Route } from "./+types/home";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { ShoppingCart } from "lucide-react";
@@ -13,7 +13,11 @@ import { CartSidebar } from "../components/CartSidebar";
 // import { CheckoutModal } from "../components/CheckoutModal";
 import { SearchOverlay } from "../components/SearchOverlay";
 import { useCart } from "../hooks/useCart";
-import { products, categories, popularSearches } from "../data/products";
+import {
+  products as dummyProducts,
+  categories,
+  popularSearches,
+} from "../data/products";
 import { createProductSlug, filterProducts } from "../utils/productUtils";
 
 export function meta({}: Route.MetaArgs) {
@@ -46,6 +50,21 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState(dummyProducts);
+
+  useEffect(() => {
+    fetch("http://localhost:8001/products")
+      .then((res) => {
+        if (!res.ok) throw new Error("API error");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch(() => {
+        setProducts(dummyProducts);
+      });
+  }, []);
 
   // Navigate to product detail page
   const goToProduct = (productName: string) => {

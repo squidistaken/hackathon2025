@@ -609,7 +609,7 @@ export default function ProductDetail({ params }: Route.ComponentProps) {
 
         {/* Product Info */}
         <div className="px-4 py-6 space-y-6">
-          {/* Title and Category */}
+          {/* Title, Category, and Stock */}
           <div>
             <Badge variant="secondary" className="mb-2">
               {categoryLabels[product.category]}
@@ -617,19 +617,28 @@ export default function ProductDetail({ params }: Route.ComponentProps) {
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
               {product.name}
             </h2>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
+            {/* Stock Status under product name */}
+            {product.stock !== null && (
+              <div className="mb-2">
+                {product.stock > 20 ? (
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400"
+                  >
+                    In Stock ({product.stock} available)
+                  </Badge>
+                ) : product.stock > 0 ? (
+                  <Badge
+                    variant="secondary"
+                    className="bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400"
+                  >
+                    Only {product.stock} left!
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive">Out of Stock</Badge>
+                )}
               </div>
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                4.8 (127 reviews)
-              </span>
-            </div>
+            )}
             <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
               €{product.price.toFixed(2)}
             </p>
@@ -647,35 +656,7 @@ export default function ProductDetail({ params }: Route.ComponentProps) {
             </CardContent>
           </Card>
 
-          {/* Stock Status */}
-          {product.stock !== null && (
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Availability
-                  </span>
-                  {product.stock > 20 ? (
-                    <Badge
-                      variant="secondary"
-                      className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400"
-                    >
-                      In Stock ({product.stock} available)
-                    </Badge>
-                  ) : product.stock > 0 ? (
-                    <Badge
-                      variant="secondary"
-                      className="bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400"
-                    >
-                      Only {product.stock} left!
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">Out of Stock</Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* ...removed availability card... */}
 
           {/* Features */}
           <Card>
