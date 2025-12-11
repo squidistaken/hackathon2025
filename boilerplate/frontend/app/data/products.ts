@@ -1,27 +1,15 @@
-import type { Route } from "./+types/product.$slug";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import {
-  Card,
-  CardContent,
-} from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import {
-  ShoppingCart,
-  ArrowLeft,
-  Plus,
-  Minus,
-  Check,
-  Truck,
-  ShieldCheck,
-  Star,
-} from "lucide-react";
-import { products } from "../data/products";
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  stock: number | null;
+  currency: string;
+}
 
-/*
-// Old products array - now imported from ../data/products
-const productsOld = [
+export const products: Product[] = [
   {
     id: 1,
     name: "Samsung Galaxy S24 128GB",
@@ -523,262 +511,26 @@ const productsOld = [
     currency: "EUR",
   },
 ];
-*/
 
-const categoryLabels: Record<string, string> = {
-  smartphone: "Smartphone",
-  accessory: "Accessory",
-  subscription: "Subscription Plan",
-  prepaid: "Prepaid",
-  tablet: "Tablet",
-  wearable: "Wearable",
-};
-
-export function meta({ params }: Route.MetaArgs) {
-  const slug = params.slug;
-  const productName = slug
-    .split("-")
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-
-  return [
-    { title: `${productName} - Godimo` },
-    { name: "description", content: `Shop ${productName} at the best price!` },
-  ];
+export interface Category {
+  id: string;
+  label: string;
 }
 
-export default function ProductDetail({ params }: Route.ComponentProps) {
-  const navigate = useNavigate();
-  const { slug } = params;
+export const categories: Category[] = [
+  { id: "all", label: "All Products" },
+  { id: "smartphone", label: "Smartphones" },
+  { id: "accessory", label: "Accessories" },
+  { id: "subscription", label: "Plans" },
+  { id: "prepaid", label: "Prepaid" },
+  { id: "tablet", label: "Tablets" },
+  { id: "wearable", label: "Wearables" },
+];
 
-  // Convert slug back to product name for matching
-  const productNameFromSlug = slug.split("-").join(" ").toLowerCase();
-
-  // Find the product
-  const product = products.find(
-    (p) => p.name.toLowerCase() === productNameFromSlug
-  );
-
-  const [quantity, setQuantity] = useState(1);
-  const [showToast, setShowToast] = useState(false);
-
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-            Product Not Found
-          </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-4">
-            The product you're looking for doesn't exist.
-          </p>
-          <Button onClick={() => navigate("/")}>Back to Home</Button>
-        </div>
-      </div>
-    );
-  }
-
-  const handleAddToCart = () => {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
-  };
-
-  return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => navigate("/")}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 truncate">
-              {product.name}
-            </h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="pt-16 pb-32">
-        {/* Product Image */}
-        <div className="bg-linear-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-900 p-8">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full max-w-md mx-auto h-80 object-contain"
-          />
-        </div>
-
-        {/* Product Info */}
-        <div className="px-4 py-6 space-y-6">
-          {/* Title and Category */}
-          <div>
-            <Badge variant="secondary" className="mb-2">
-              {categoryLabels[product.category]}
-            </Badge>
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
-              {product.name}
-            </h2>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                4.8 (127 reviews)
-              </span>
-            </div>
-            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-              €{product.price.toFixed(2)}
-            </p>
-          </div>
-
-          {/* Description */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 mb-2">
-                Description
-              </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                {product.description}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Stock Status */}
-          {product.stock !== null && (
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Availability
-                  </span>
-                  {product.stock > 20 ? (
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
-                      In Stock ({product.stock} available)
-                    </Badge>
-                  ) : product.stock > 0 ? (
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400">
-                      Only {product.stock} left!
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">Out of Stock</Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Features */}
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 mb-3">
-                Benefits
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center shrink-0">
-                    <Truck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
-                      Free Shipping
-                    </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Delivered to your door at no extra cost
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
-                      1 Year Warranty
-                    </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Full manufacturer warranty included
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center shrink-0">
-                    <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
-                      Easy Returns
-                    </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                      14-day return policy, no questions asked
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-
-      {/* Bottom Fixed Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 p-4 shadow-lg">
-        <div className="flex items-center gap-3">
-          {/* Quantity Selector */}
-          <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-10 w-10"
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              disabled={quantity <= 1}
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <span className="text-base font-semibold px-3 min-w-8 text-center">
-              {quantity}
-            </span>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-10 w-10"
-              onClick={() => setQuantity(quantity + 1)}
-              disabled={product.stock !== null && quantity >= product.stock}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Add to Cart Button */}
-          <Button
-            className="flex-1 h-12 text-base"
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-          >
-            <ShoppingCart className="h-5 w-5 mr-2" />
-            Add to Cart • €{(product.price * quantity).toFixed(2)}
-          </Button>
-        </div>
-      </div>
-
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-down">
-          <Check className="h-5 w-5 text-green-400 dark:text-green-600" />
-          <span className="text-sm font-medium">
-            {quantity} × {product.name} added to cart!
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
+export const popularSearches = [
+  "iPhone",
+  "Samsung",
+  "AirPods",
+  "Unlimited Plan",
+  "5G",
+];
