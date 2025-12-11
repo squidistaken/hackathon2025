@@ -26,9 +26,9 @@ class CartController:
             "total": cart.calculate_total(),
         }
 
-
-    def add_to_cart(customer_id: int, product_id: int, quantity: int = 1):
-        cart = cart_repo.get_cart(customer_id) or Cart()
+    def add_to_cart(self, customer_id: int, product_id: int,
+                    quantity: int = 1):
+        cart = self.cart_repo.get_cart(customer_id) or Cart()
 
         # TODO: Replace with actual product fetching logic
         product = Product(
@@ -40,6 +40,6 @@ class CartController:
         )
 
         cart.add_item(product, quantity=quantity)
-        cart_repo.save_cart(customer_id, cart)
+        self.cart_repo.save_cart(customer_id, cart)
 
         return {"message": "Item added to cart"}
